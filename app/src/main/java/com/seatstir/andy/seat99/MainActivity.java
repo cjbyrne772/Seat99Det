@@ -1,16 +1,10 @@
 package com.seatstir.andy.seat99;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -73,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i("MainAct ", "OnCreate");
 
-            tv = (TextView) findViewById(R.id.textView2);
+         //   tv = (TextView) findViewById(R.id.textView2);
             Button button = (Button) findViewById(R.id.buttonLogin);
 
             // Get a RequestQueue. If the VolleySingleton has not been created, this will
@@ -84,14 +78,17 @@ public class MainActivity extends AppCompatActivity {
             // with networkStringLoader
             //Toast.makeText(MainActivity.this, "starting", Toast.LENGTH_SHORT).show();
 
-            final EditText etUser = (EditText) findViewById(R.id.editText);
-            final EditText etPass = (EditText) findViewById(R.id.editText2);
+            final EditText etUser = (EditText) findViewById(R.id.editTextUser);
+            final EditText etPass = (EditText) findViewById(R.id.editTextPass);
 
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String kbuser = etUser.getText().toString();
                     String kbpass = etPass.getText().toString();
+                //    String kbuser = "cjbyrne@gmail.com";
+                //    String kbpass = "ffft";
+                    //    int i = Integer.parseInt(editText.getText().toString());
                     VolleySingleton.getInstance(MainActivity.this).setGloginEmail(kbuser);
                     VolleySingleton.getInstance(MainActivity.this).setGloginPass(kbpass);
 

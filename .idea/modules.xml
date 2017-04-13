@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Seat99.iml" filepath="$PROJECT_DIR$/Seat99.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Seat99Det.iml" filepath="$PROJECT_DIR$/Seat99Det.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/eventfocus/eventfocus.iml" filepath="$PROJECT_DIR$/eventfocus/eventfocus.iml" />
       <module fileurl="file://$PROJECT_DIR$/eventlistlib/eventlistlib.iml" filepath="$PROJECT_DIR$/eventlistlib/eventlistlib.iml" />

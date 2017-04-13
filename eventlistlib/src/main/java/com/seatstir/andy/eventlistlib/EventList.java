@@ -2,8 +2,8 @@ package com.seatstir.andy.eventlistlib;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,14 +11,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
 import com.seatstir.andy.eventfocus.EventFocus;
 import com.seatstir.andy.ptm.resact;
 //import com.android.volley.RequestQueue;
 //import com.seatstir.andy.volleylib.VolleySingleton;
-import com.seatstir.andy.volleylib.MakeStringRequest;
-import com.seatstir.andy.volleylib.NetworkStringLoader;
-import com.seatstir.andy.volleylib.VolleyResponseListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +37,7 @@ public class EventList extends Activity {
     List<EventData> ListOfEvents;
     String strUserID; // The user id being passed in
     String jstrUserID; // the json string that carries the above user ID
+    String sqlimit;
     String urlResString = "https://www.seatstir.com/ptapp/ptreslist.php";
 
     @Override
@@ -48,7 +45,7 @@ public class EventList extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
         Button buttonMyRes = (Button) findViewById(R.id.buttonMyRes);
-        Button buttonTest = (Button) findViewById(R.id.buttonMStest);
+     //   Button buttonTest = (Button) findViewById(R.id.buttonMStest);
         Log.i("EventList ", "OnCreate");
 
 // 4 below
@@ -77,14 +74,17 @@ public class EventList extends Activity {
         // adapter can fill the ListView with that list.
         try {
             // wtf parsing
-            JSONObject xxjobjTop = new JSONObject(xxtestJstr);
+         //   JSONObject             xxjstr = xxjobjTop.getString("user_id"); // should work
+            JSONObject             xxjobjTop = new JSONObject(xxtestJstr);
             JSONObject xjobjuser, xxjobjuser;
             String     xjstr,     xxjstr;
-
-            xxjstr = xxjobjTop.getString("user_id"); // should work
             JSONObject xjobjTop = new JSONObject(xtestJstr);
+            xxjstr = xxjobjTop.getString("user_id"); // should work
+          //  sqlimit = xxjobjTop.getString("qlimit"); // should work
+
+          //  JSONObject xjobjTop = new JSONObject(xtestJstr);
           //  JSONObject xjobjuser;
-            xjstr = xjobjTop.getString("user_id"); // why fail?
+          //  xjstr = xjobjTop.getString("user_id"); // why fail?
 
             //we're really interested only in the user id and the event array
             // The user id is pulled out into a jstr that will eventually get sent
@@ -93,11 +93,20 @@ public class EventList extends Activity {
             JSONObject jobjuser;
            // xxjstr = jobjTop.getString("user_id");
             strUserID = jobjTop.getString("user_id"); // str going to php
+            sqlimit = jobjTop.getString("qlimit"); // might as well keep it as a string
+            if ( sqlimit == null ) {
+                sqlimit = "0";
+            }
+            if (TextUtils.isEmpty(sqlimit)) {
+                sqlimit = "0";
+            }
             // as long as we're here inside the try, build the string. There
             // should be some way of substringing the json object we built,
             // just pulling out the
+            // for now, we don't use bldj, but leave this code here in case we do
             JSONObject bldj = new JSONObject();
             bldj.put("user_id", strUserID);
+            bldj.put("qlimit", sqlimit);
             jstrUserID = bldj.toString();
 
           //  jstrUserID = jobjTop.toString("user_id");
@@ -110,26 +119,45 @@ public class EventList extends Activity {
             for (int i = 0; i < length; i++) {
                 JSONObject c = jsEvents.getJSONObject(i);
                 String d = c.getString("shortDesc");
-                EventData itemPlaceholder = new EventData(d, "   ph");
+                int eid = c.getInt("eid");
+                int vid = c.getInt("vid");
+                // only one pid gets returned - we neeed all pids. int pid = c.getInt("pid");
+                EventData itemPlaceholder = new EventData(d, eid, vid);
                 ListOfEvents.add(itemPlaceholder);
             }
+            // add some filler events for testing TESTING ONLY
+            for (int i = 0; i < 12; i++) {
+                EventData itemPlaceholder = new EventData("Do not pick me", "   ph", 7878);
+             //   ListOfEvents.add(itemPlaceholder);
+            }
+
             //   myEvents.setAdapter(new CustomAdapter(this,testContents));
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
         eventAdapter = new CustomAdapter(getApplicationContext(), R.layout.custom_event,
                 ListOfEvents);
-        ListView myEvents = (ListView) findViewById(R.id.listView);
+        ListView myEvents = (ListView) findViewById(R.id.EventListView);
+        // set adapeter crashes rt. lets just test this out by making a new
         myEvents.setAdapter(eventAdapter);
         myEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //   thisEventPicked = ListOfEvents[position];
+                // OK, we have an event picked, and we will send the event id to EventFocus. EventFocus
+                // will then query the database to get the list of performances for this event.
+                // This might be changed at a later time, when we might get all the event data and
+                // performance data at the same time in one big json object. If so, then we would send the
+                // performance part of the object from here.
                 thisEventPicked = ListOfEvents.get(position);
                 String sTheEvent = thisEventPicked.getShortdesc();
+                int eventid = thisEventPicked.getEventid();
+                int vid = thisEventPicked.getVenueid();
                 Toast.makeText(getApplicationContext(), sTheEvent, Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getApplicationContext(), EventFocus.class);
                 i.putExtra("focusstr", sTheEvent);
+                i.putExtra("eid", eventid);
+                i.putExtra("qlimit", Integer.parseInt(sqlimit));
+                i.putExtra("vid", vid);
                 startActivity(i);  // goes into login success
             }
         });
@@ -150,6 +178,7 @@ public class EventList extends Activity {
              });
         // perform the test function. call the php file that undeletes the reservations
         // we just deleted
+        /* remove the buttontest for now...
         buttonTest.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
@@ -177,7 +206,7 @@ public class EventList extends Activity {
 
              }
         } );
-
+        remove buttontest  */
 
     }
 }

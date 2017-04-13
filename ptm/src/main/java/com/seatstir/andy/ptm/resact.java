@@ -115,7 +115,7 @@ import java.util.List;
             @Override
             public void onResponse(String response) {
                 if (response.contains("success")){
-                    Log.i("GetResList", response);
+                 //   Log.i("GetResList", response);
                     ParseAndFill(response);
                     Log.i("GetResList", "filled data");
 
@@ -151,8 +151,10 @@ import java.util.List;
                 JSONObject c = jsResList.getJSONObject(ic);
                 int rid = c.getInt("rid");
                 String d = c.getString("shortDesc");
+                String pdate = c.getString("sdate");
+                String ptime = c.getString("stime");
                 int q = c.getInt("qty");
-                ResactData itemPlaceholder = new ResactData(rid, d, q); // add a json constructor later new Resactdata(c)
+                ResactData itemPlaceholder = new ResactData(rid, d, pdate + " " + ptime,  q); // add a json constructor later new Resactdata(c)
                 ListOfRes.add(itemPlaceholder);
             }
             //   myEvents.setAdapter(new ResactAdapter(this,testContents);

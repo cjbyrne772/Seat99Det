@@ -36,6 +36,7 @@ class ResactAdapter extends ArrayAdapter<ResactData>
 {
     Context context;
     TextView resText;
+    TextView resDate;
     TextView resQ;
     ResactAdapter sk;
     ResactData resData;
@@ -99,10 +100,13 @@ class ResactAdapter extends ArrayAdapter<ResactData>
 
         // setup the destination for the data
         resText = (TextView) customView.findViewById(R.id.textView);
+        resDate = (TextView) customView.findViewById(R.id.textdate);
         resQ    = (TextView) customView.findViewById(R.id.textQ);
+
         // txtRes = (TextView) customView.findViewById(R.id.textView);
         //get the data from resData
         resText.setText(resData.getResDesc());
+        resDate.setText(resData.getResDate());
         final int iq = resData.getResq();
         resQ.setText(Integer.toString(iq));
         iresID = resData.getResid();
